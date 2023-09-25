@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="InfernoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Agencies">
+          <Key>
+            <PropertyRef Name="AgencyID" />
+          </Key>
+          <Property Name="AgencyID" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="150" />
+          <Property Name="Description" Type="varchar" MaxLength="400" />
+        </EntityType>
+        <EntityType Name="Providers">
+          <Key>
+            <PropertyRef Name="ProviderID" />
+          </Key>
+          <Property Name="ProviderID" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="255" />
+          <Property Name="Date_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ServiceHourseSheetAudit">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServiceHoursSheetID" Type="bigint" />
+          <Property Name="ServiceHoursSheetProviderID" Type="varchar" MaxLength="250" />
+          <Property Name="ServiceHoursSheetAgencyID" Type="varchar" MaxLength="150" />
+          <Property Name="ServiceHoursSheetDateTime" Type="datetime" />
+          <Property Name="ServiceHoursSheetHoursProvided" Type="float" />
+          <Property Name="ServiceHoursSheetHoursOrdered" Type="float" />
+          <Property Name="ServiceHoursSheetOverage" Type="float" />
+          <Property Name="UserName" Type="varchar" MaxLength="255" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="ServiceHoursSheet">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderID" Type="varchar" MaxLength="150" />
+          <Property Name="Date_Time" Type="datetime" />
+          <Property Name="HoursProvided" Type="float" />
+          <Property Name="HoursOrdered" Type="float" />
+          <Property Name="Overage" Type="float" />
+          <Property Name="UserName" Type="varchar" MaxLength="255" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="AgencyID" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <Association Name="FK_ServiceHoursSheet_Agencies">
+          <End Role="Agencies" Type="Self.Agencies" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ServiceHoursSheet" Type="Self.ServiceHoursSheet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Agencies">
+              <PropertyRef Name="AgencyID" />
+            </Principal>
+            <Dependent Role="ServiceHoursSheet">
+              <PropertyRef Name="AgencyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServiceHoursSheet_Providers">
+          <End Role="Providers" Type="Self.Providers" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ServiceHoursSheet" Type="Self.ServiceHoursSheet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Providers">
+              <PropertyRef Name="ProviderID" />
+            </Principal>
+            <Dependent Role="ServiceHoursSheet">
+              <PropertyRef Name="ProviderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="InfernoModelStoreContainer">
+          <EntitySet Name="Agencies" EntityType="Self.Agencies" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Providers" EntityType="Self.Providers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceHourseSheetAudit" EntityType="Self.ServiceHourseSheetAudit" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceHoursSheet" EntityType="Self.ServiceHoursSheet" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ServiceHoursSheet_Agencies" Association="Self.FK_ServiceHoursSheet_Agencies">
+            <End Role="Agencies" EntitySet="Agencies" />
+            <End Role="ServiceHoursSheet" EntitySet="ServiceHoursSheet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServiceHoursSheet_Providers" Association="Self.FK_ServiceHoursSheet_Providers">
+            <End Role="Providers" EntitySet="Providers" />
+            <End Role="ServiceHoursSheet" EntitySet="ServiceHoursSheet" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="InfernoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Provider">
+          <Key>
+            <PropertyRef Name="ProviderID" />
+          </Key>
+          <Property Name="ProviderID" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Date_Time" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ServiceHoursSheets" Relationship="InfernoModel.FK_ServiceHoursSheet_Providers" FromRole="Provider" ToRole="ServiceHoursSheet" />
+        </EntityType>
+        <EntityType Name="ServiceHourseSheetAudit">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceHoursSheetID" Type="Int64" />
+          <Property Name="ServiceHoursSheetProviderID" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceHoursSheetAgencyID" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceHoursSheetDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ServiceHoursSheetHoursProvided" Type="Double" />
+          <Property Name="ServiceHoursSheetHoursOrdered" Type="Double" />
+          <Property Name="ServiceHoursSheetOverage" Type="Double" />
+          <Property Name="UserName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ServiceHoursSheet">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderID" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Date_Time" Type="DateTime" Precision="3" />
+          <Property Name="HoursProvided" Type="Double" />
+          <Property Name="HoursOrdered" Type="Double" />
+          <Property Name="Overage" Type="Double" />
+          <Property Name="UserName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="AgencyID" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Agency" Relationship="InfernoModel.FK_ServiceHoursSheet_Agencies" FromRole="ServiceHoursSheet" ToRole="Agency" />
+          <NavigationProperty Name="Provider" Relationship="InfernoModel.FK_ServiceHoursSheet_Providers" FromRole="ServiceHoursSheet" ToRole="Provider" />
+        </EntityType>
+        <EntityContainer Name="InfernoEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Providers" EntityType="Self.Provider" />
+          <EntitySet Name="ServiceHourseSheetAudits" EntityType="Self.ServiceHourseSheetAudit" />
+          <EntitySet Name="ServiceHoursSheets" EntityType="Self.ServiceHoursSheet" />
+          <EntitySet Name="Agencies" EntityType="InfernoModel.Agency" />
+          <AssociationSet Name="FK_ServiceHoursSheet_Agencies" Association="InfernoModel.FK_ServiceHoursSheet_Agencies">
+            <End Role="Agency" EntitySet="Agencies" />
+            <End Role="ServiceHoursSheet" EntitySet="ServiceHoursSheets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServiceHoursSheet_Providers" Association="InfernoModel.FK_ServiceHoursSheet_Providers">
+            <End Role="Provider" EntitySet="Providers" />
+            <End Role="ServiceHoursSheet" EntitySet="ServiceHoursSheets" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Agency">
+          <Key>
+            <PropertyRef Name="AgencyID" />
+          </Key>
+          <Property Name="AgencyID" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="400" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ServiceHoursSheets" Relationship="InfernoModel.FK_ServiceHoursSheet_Agencies" FromRole="Agency" ToRole="ServiceHoursSheet" />
+        </EntityType>
+        <Association Name="FK_ServiceHoursSheet_Agencies">
+          <End Type="InfernoModel.Agency" Role="Agency" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="InfernoModel.ServiceHoursSheet" Role="ServiceHoursSheet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Agency">
+              <PropertyRef Name="AgencyID" />
+            </Principal>
+            <Dependent Role="ServiceHoursSheet">
+              <PropertyRef Name="AgencyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServiceHoursSheet_Providers">
+          <End Type="InfernoModel.Provider" Role="Provider" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="InfernoModel.ServiceHoursSheet" Role="ServiceHoursSheet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderID" />
+            </Principal>
+            <Dependent Role="ServiceHoursSheet">
+              <PropertyRef Name="ProviderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="InfernoModelStoreContainer" CdmEntityContainer="InfernoEntities">
+          <EntitySetMapping Name="Providers">
+            <EntityTypeMapping TypeName="InfernoModel.Provider">
+              <MappingFragment StoreEntitySet="Providers">
+                <ScalarProperty Name="ProviderID" ColumnName="ProviderID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Date_Time" ColumnName="Date_Time" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceHourseSheetAudits">
+            <EntityTypeMapping TypeName="InfernoModel.ServiceHourseSheetAudit">
+              <MappingFragment StoreEntitySet="ServiceHourseSheetAudit">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ServiceHoursSheetID" ColumnName="ServiceHoursSheetID" />
+                <ScalarProperty Name="ServiceHoursSheetProviderID" ColumnName="ServiceHoursSheetProviderID" />
+                <ScalarProperty Name="ServiceHoursSheetAgencyID" ColumnName="ServiceHoursSheetAgencyID" />
+                <ScalarProperty Name="ServiceHoursSheetDateTime" ColumnName="ServiceHoursSheetDateTime" />
+                <ScalarProperty Name="ServiceHoursSheetHoursProvided" ColumnName="ServiceHoursSheetHoursProvided" />
+                <ScalarProperty Name="ServiceHoursSheetHoursOrdered" ColumnName="ServiceHoursSheetHoursOrdered" />
+                <ScalarProperty Name="ServiceHoursSheetOverage" ColumnName="ServiceHoursSheetOverage" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceHoursSheets">
+            <EntityTypeMapping TypeName="InfernoModel.ServiceHoursSheet">
+              <MappingFragment StoreEntitySet="ServiceHoursSheet">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProviderID" ColumnName="ProviderID" />
+                <ScalarProperty Name="Date_Time" ColumnName="Date_Time" />
+                <ScalarProperty Name="HoursProvided" ColumnName="HoursProvided" />
+                <ScalarProperty Name="HoursOrdered" ColumnName="HoursOrdered" />
+                <ScalarProperty Name="Overage" ColumnName="Overage" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="AgencyID" ColumnName="AgencyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Agencies">
+            <EntityTypeMapping TypeName="InfernoModel.Agency">
+              <MappingFragment StoreEntitySet="Agencies">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="AgencyID" ColumnName="AgencyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
